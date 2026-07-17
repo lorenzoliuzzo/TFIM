@@ -14,7 +14,7 @@ and via a variational quantum eigensolver (VQE).
    states across the $h$ sweep; compare energies & order parameter to exact.
 5. **Criticality** — finite-size analysis across `1x4/1x8/1x16` to locate the
    transition near $h/|J| = 1$.
-6. **Report & slides** — write up in `report/report.md`, slides in `presentation/`.
+6. **Report & slides** — write up in `report.md`, slides in `presentation/`.
 
 ## Open questions
 - Which ansatz best captures the ordered–disordered transition at fixed depth?

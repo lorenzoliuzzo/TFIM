@@ -11,23 +11,23 @@ from __future__ import annotations
 import time
 from pathlib import Path
 
-from src.analysis import (
+from src.physics.analysis import (
     binder_crossing,
     estimate_critical_field,
     plot_binder,
     plot_data_collapse,
     plot_order_parameter,
 )
-from src.benchmark import (
+from src.ansatz.benchmark import (
     compare_ansatze,
     plot_convergence,
     run_benchmark,
     summarize,
 )
-from src.entanglement import fit_central_charge, plot_central_charge, plot_entropy_vs_field
-from src.loader import load_ising
-from src.trainability import plot_barren_plateaus
-from src.vqe import plot_sweep, sweep_vqe
+from src.physics.entanglement import fit_central_charge, plot_central_charge, plot_entropy_vs_field
+from src.core.loader import load_ising
+from src.ansatz.trainability import plot_barren_plateaus
+from src.ansatz.vqe import plot_sweep, sweep_vqe
 
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data"

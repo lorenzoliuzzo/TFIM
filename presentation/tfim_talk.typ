@@ -60,7 +60,7 @@ Route one, Suzuki-Trotter: slice the partition function Z = Tr(e^{-beta H}) into
 
 Route two, Jordan-Wigner: map spin up/down onto an occupied or empty fermionic orbital. The naive site-local version is broken, because spins on different sites commute but fermions anticommute -- fixed by attaching a nonlocal string operator. After the transform the Hamiltonian is quadratic -- hopping and pairing only -- so a Fourier transform plus a Bogoliubov rotation diagonalizes it with no exponential cost. The gap is the minimum over k of the dispersion, and it vanishes exactly at k=0, g=1.
 
-Why both: these are complementary, not redundant. Suzuki-Trotter gives the actual non-analyticity of the free energy -- sufficient for a QPT; Jordan-Wigner gives a vanishing gap -- a necessary condition. Zero shared machinery, same answer. And the JW closed form is what src/jordan_wigner.py evaluates numerically later, as a cross-check against the dataset. Full derivations for both are in backup if anyone wants them.]
+Why both: these are complementary, not redundant. Suzuki-Trotter gives the actual non-analyticity of the free energy -- sufficient for a QPT; Jordan-Wigner gives a vanishing gap -- a necessary condition. Zero shared machinery, same answer. And the JW closed form is what src/physics/jordan_wigner.py evaluates numerically later, as a cross-check against the dataset. Full derivations for both are in backup if anyone wants them.]
 #table(
   columns: (auto, 1.5fr, 1fr),
   table.header([route], [mechanism], [gives]),
@@ -68,7 +68,7 @@ Why both: these are complementary, not redundant. Suzuki-Trotter gives the actua
   [Jordan-Wigner], [spin $arrow$ fermion ($sigma_j^z=2hat(n)_j-1$) + nonlocal string $arrow$ $H$ *quadratic* $arrow$ Fourier + Bogoliubov; $epsilon(k)=2sqrt(1+g^2-2g cos k)$], [vanishing gap at $k=0$ — *necessary*],
 )
 - Both are exact and non-perturbative — no fit, no series expansion; *zero shared machinery, same $g_c=1$* (derivations in backup)
-- JW also gives $E_0 = -sum_(k>0) epsilon(k)$ in closed form — evaluated by `src/jordan_wigner.py` as a numerical cross-check later
+- JW also gives $E_0 = -sum_(k>0) epsilon(k)$ in closed form — evaluated by `src/physics/jordan_wigner.py` as a numerical cross-check later
 
 == Entanglement entropy and the area law
 #speaker-note[This sets up the central-charge results, so let me define things carefully. For a bipartite pure state, the Schmidt decomposition gives a reduced density matrix rho_A on one half, and the entanglement entropy is its von Neumann entropy, S = -Tr(rho_A ln rho_A). Away from criticality, gapped ground states obey an area law: S scales with the size of the boundary between the two regions, not the volume of either, because only correlations within one correlation length xi of the cut actually contribute. Right at criticality, xi diverges, the area law breaks down, and S grows logarithmically with block size instead -- the coefficient fixed by the central charge c of the underlying CFT, via Calabrese-Cardy. For the Ising universality class, c = 1/2 exactly. One more closed-form check: exactly at g=0, the TFIM entropy formula predicts S goes to ln 2 -- that's the cat-state degeneracy from the classical Ising slide, made explicit as an entanglement statement: the two symmetry-broken branches are equally weighted, giving exactly one bit of entanglement entropy.]
@@ -81,7 +81,7 @@ Why both: these are complementary, not redundant. Suzuki-Trotter gives the actua
 == The dataset: qspin / Ising
 #speaker-note[Before the results, I want to be upfront about where the ground truth comes from. Everything is loaded from PennyLane's qspin dataset via a single call: qml.data.load with sysname Ising, plus periodicity, lattice, and layout -- a system is fully determined by those four discrete choices. Periodicity is open, two free ends, or closed, a ring. Lattice is chain, 1D, or rectangular, 2D. Layout is the size, rows by columns -- chains use 1x4, 1x8, 1x16; rectangular goes from 2x2 up through 4x4. N, the total spin count, is rows times columns, over 4, 8, 16 -- fourteen distinct systems in all.
 
-Each system isn't one Hamiltonian, it's a sweep of 100 field values over a range that always straddles h=1, and every attribute in the table is an array of length 100 indexed by that sweep. hamiltonians is 100 full PennyLane Hamiltonian objects -- our code reads these directly, term by term, rather than hard-coding the lattice geometry; src/vqe_hva.py literally extracts the ZZ bonds and X field sites from whatever Hamiltonian object it's handed. ground_energies and ground_states are the exact diagonalization ground truth at each field. order_params is the expectation of |M_z|, precomputed. shadow_basis and shadow_meas are classical-shadow data: 1000 randomized single-qubit Pauli measurement bases and outcomes per field -- exactly what a real NISQ device would hand you, no statevector involved, used in backup.]
+Each system isn't one Hamiltonian, it's a sweep of 100 field values over a range that always straddles h=1, and every attribute in the table is an array of length 100 indexed by that sweep. hamiltonians is 100 full PennyLane Hamiltonian objects -- our code reads these directly, term by term, rather than hard-coding the lattice geometry; src/ansatz/vqe_hva.py literally extracts the ZZ bonds and X field sites from whatever Hamiltonian object it's handed. ground_energies and ground_states are the exact diagonalization ground truth at each field. order_params is the expectation of |M_z|, precomputed. shadow_basis and shadow_meas are classical-shadow data: 1000 randomized single-qubit Pauli measurement bases and outcomes per field -- exactly what a real NISQ device would hand you, no statevector involved, used in backup.]
 - `qml.data.load("qspin", sysname="Ising", periodicity=.., lattice=.., layout=..)` — fully specified by four discrete choices: `periodicity` `"open"`/`"closed"`, `lattice` `"chain"` (1D)/`"rectangular"` (2D), `layout` = `rows x cols` (chain: `1x4,1x8,1x16`; rect.: `2x2 … 4x4`)
 - $N = "rows"times"cols" in {4,8,16}$; each system sweeps 100 values of $h$, always straddling $h=1$
 #table(
@@ -101,7 +101,7 @@ The scale: sixteen modules, about twenty-one hundred lines, backed by six hundre
 The design point I'd most defend is the second bullet: extract_structure inspects the dataset's own qml.Hamiltonian object term by term -- PauliZ-tensor-PauliZ factors become bonds, lone PauliX factors become field wires. There is no hardcoded lattice geometry anywhere. That's why the identical VQE code is correct on the open chain, the closed ring, and the 2D rectangular lattices, without a single branch on system type -- the circuit is built from whatever bonds are actually present in the Hamiltonian it's handed.
 
 If asked what this bought us concretely: the pipeline is exactly what caught a stale duplicate and five dead imports, and excluding a trivial h=0 point moved a headline number from about 38x to 23x -- which then held up under a later multi-restart rerun as a proper median rather than a single-seed fluke. Backup has the full module map.]
-- Pipeline: cached `qspin` HDF5 $arrow$ `loader.load_ising()` $arrow$ typed `IsingData` $arrow$ *one `src/*.py` per physics question* $arrow$ one PNG in `plots/` $arrow$ embedded by relative path into *both* `report/report.md` and these slides — *no number in either output is typed by hand*
+- Pipeline: cached `qspin` HDF5 $arrow$ `loader.load_ising()` $arrow$ typed `IsingData` $arrow$ *one `src/*.py` per physics question* $arrow$ one PNG in `plots/` $arrow$ embedded by relative path into *both* `report.md` and these slides — *no number in either output is typed by hand*
 #grid(
   columns: (1.45fr, 1fr),
   gutter: 12pt,
@@ -134,7 +134,7 @@ If asked what this bought us concretely: the pipeline is exactly what caught a s
   figure(image("../plots/order_parameter_chain_open.png", width: 92%), caption: [$chevron.l |M_z| chevron.r \/ N$ vs $h$]),
   figure(image("../plots/binder_cumulant_chain_open.png", width: 92%), caption: [$U_4$ crossing $approx 0.84$]),
 )
-#src-tag("src/analysis.py")
+#src-tag("src/physics/analysis.py")
 
 == Entanglement entropy and the central charge
 #speaker-note[Two results on one slide. On the left, entanglement entropy S against h for several N: away from the transition S stays roughly flat with N -- the area law -- then peaks near the transition, where correlations become long-ranged, and deep in the ordered phase it plateaus at ln 2. That plateau is the cat-state degeneracy: the exact ground state there is a symmetric superposition of the two ferromagnetic branches, and tracing out half the system leaves exactly one bit. The peak location is a third independent g_c estimate.
@@ -152,7 +152,7 @@ On the right, the central charge -- the universal fingerprint of the critical po
   figure(image("../plots/entropy_vs_field_chain_open.png", width: 92%), caption: [#text(size: 0.8em)[$S$ vs $h$: area law $arrow$ peak $arrow$ $ln 2$]]),
   figure(image("../plots/central_charge_closed_N16.png", width: 92%), caption: [#text(size: 0.8em)[Closed chain: $c approx 0.51$ (Ising: $1\/2$)]]),
 )
-#src-tag("src/entanglement.py")
+#src-tag("src/physics/entanglement.py")
 
 == Locating $g_c$: finite size and boundaries
 #speaker-note[Here's the finite-size h_c estimate from the steepest-descent point of the order parameter, at three sizes, for both boundary conditions. Open chain: 0.61, 0.78, 0.91 at N=4, 8, 16 -- drifting toward the thermodynamic value of 1 as N grows, exactly as expected, since finite systems round off the transition and pull the apparent critical point inward. As a cross-check, the steepest-descent of the order parameter and the crossover point of the entanglement entropy agree at each N -- reassuring, since they come from completely different quantities.
@@ -179,13 +179,13 @@ If asked about data collapse: it's in backup -- rescaling the order parameter by
   ],
   align(horizon + center)[#figure(image("../plots/boundary_comparison_hc.png", width: 100%))],
 )
-#src-tag("src/finite_size_scaling.py", "src/boundary_comparison.py")
+#src-tag("src/physics/finite_size_scaling.py", "src/physics/boundary_comparison.py")
 
 == Independent check: Jordan-Wigner
 #speaker-note[This is the payoff of the free-fermion derivation from the theory section. The closed-form Jordan-Wigner ground energy, E_0 = -sum over positive-k modes of epsilon(k), filling every negative-energy mode of the Bogoliubov spectrum, is evaluated directly and compared against the dataset's exact diagonalization energies: they agree to somewhere between 1e-13 and 1e-15 for N=4, 8, and 16. That's floating-point precision, not numerical-method precision -- there's no exact diagonalization anywhere in this calculation, just a closed-form expression evaluated directly. Since this derivation shares zero code with the exact-diagonalization pipeline the rest of the results rely on, this agreement is about as strong a cross-check as we could ask for.]
 - The closed-form free-fermion energy (previous section) matches the dataset's exact diagonalization to floating-point precision, with no ED involved
 #figure(image("../plots/jordan_wigner_cross_check.png", width: 88%))
-#src-tag("src/jordan_wigner.py")
+#src-tag("src/physics/jordan_wigner.py")
 
 #focus-slide[Variational quantum eigensolver]
 
@@ -216,7 +216,7 @@ QAOA, on the next slide, is this same HVA circuit again -- reinterpreted and ini
 - *Annealing-inspired init*: layer $l$ seeded at $s_l=(l+1\/2)\/p$ with $gamma_l = s_l dot.c delta t$, $beta_l=(1-s_l) dot.c delta t$ — places the optimizer in the basin a slow anneal would follow, instead of starting at random
 - As $p arrow infinity$ with a slow schedule, QAOA reproduces exact adiabatic evolution; at finite $p$ the residual energy error measures the cost of digitization
 - Same circuit as HVA $arrow$ *same trainability*: the barren-plateau table reports one shared HVA/QAOA column
-#src-tag("src/vqe_hva.py")
+#src-tag("src/ansatz/vqe_hva.py")
 
 == VQE: hardware-efficient vs physics-informed — results
 #speaker-note[Here's the head-to-head, and every curve is a median over four independent random restarts with the shaded inter-quartile band showing the restart-to-restart spread -- a single seed is an anecdote, VQE outcomes swing with the initialization. At N=8, median absolute error over the field sweep is 2.8e-1 for HEA and 1.2e-2 for HVA -- about 23 times better, or 1.8e-3 if you take the best of the four restarts. The right panel is the same comparison at N=16, and the gap widens to about 85 times: HEA has essentially stopped learning -- its error is order ten -- while HVA is still near 0.2. That widening is the whole point: it's not that HEA is a constant factor worse, it degrades as the system grows. Reproducibility note if asked: these numbers come from convergence-based training rather than a fixed step budget, and the whole grid runs in parallel across cores in single precision -- an earlier fixed-budget, single-seed version reported this as a fragile ~23x that has now firmed up with proper restart statistics.]
@@ -228,7 +228,7 @@ QAOA, on the next slide, is this same HVA circuit again -- reinterpreted and ini
   figure(image("../plots/ansatz_comparison_N8.png", width: 100%), caption: [$N=8$: median $|Delta E|$ $2.8 times 10^(-1)$ (HEA) $arrow$ $1.2 times 10^(-2)$ (HVA), $approx 23 times$]),
   figure(image("../plots/ansatz_comparison_N16.png", width: 100%), caption: [$N=16$: $1.8 times 10^1$ (HEA) $arrow$ $2.1 times 10^(-1)$ (HVA), $approx 85 times$]),
 )
-#src-tag("src/vqe.py", "src/vqe_hva.py", "src/benchmark.py")
+#src-tag("src/ansatz/vqe.py", "src/ansatz/vqe_hva.py", "src/ansatz/benchmark.py")
 
 == Trainability: barren plateaus and depth
 #speaker-note[Accuracy alone doesn't tell you whether an ansatz is trainable at scale, so here's the other half of the VQE story. The diagnostic: the variance, over random parameter initializations, of the energy gradient with respect to each parameter component, averaged over components, at fixed depth. If that variance shrinks exponentially with N, almost every random starting point sits on a flat plain with essentially no gradient signal -- a barren plateau, and no optimizer, however good, can climb out.
@@ -251,7 +251,7 @@ The right panel is the operational face of that: HEA alone, swept over circuit d
       [16], [$6.9 dot 10^(-4)$], [147.3],
     )]
     #v(6pt)
-    #align(left)[#text(size: 0.62em, fill: rgb("#5E8B65"))[#raw("src/trainability.py")\ #raw("src/benchmark.py")]]
+    #align(left)[#text(size: 0.62em, fill: rgb("#5E8B65"))[#raw("src/ansatz/trainability.py")\ #raw("src/ansatz/benchmark.py")]]
   ],
   align(horizon + center)[#figure(image("../plots/barren_plateaus.png", width: 100%), caption: [#text(size: 0.65em)[Gradient variance vs $N$]])],
   align(horizon + center)[#figure(image("../plots/vqe_benchmark.png", width: 100%), caption: [#text(size: 0.65em)[HEA depth scan: deeper = *worse* at $N=16$]])],
@@ -303,7 +303,7 @@ Right panel is the same story for the central charge: c drifts 0.588, 0.608, 0.6
   figure(image("../plots/finite_size_hc_chain_open.png", width: 92%), caption: [#text(size: 0.75em)[Free 3-point fit overshoots $h_c=1$]]),
   figure(image("../plots/central_charge_scaling_chain_open.png", width: 92%), caption: [#text(size: 0.75em)[$c$ drifts *away* from $1\/2$ — boundary bias]]),
 )
-#src-tag("src/finite_size_scaling.py")
+#src-tag("src/physics/finite_size_scaling.py")
 
 == Backup: where HVA's advantage actually lives
 #speaker-note[This anticipates the sharpest challenge to the headline number. The main deck says HVA beats HEA by 23x at N=8 as a median over the field sweep. A median hides structure, so here is the error resolved field by field, and the structure is the opposite of uniform.
@@ -326,7 +326,7 @@ Bottom panel: gradient variance against field for both, at N=8. HVA's is two to 
   ],
   align(horizon + center)[#figure(image("../plots/vqe_error_trainability_1x8.png", width: 95%))],
 )
-#src-tag("src/vqe_error_profile.py")
+#src-tag("src/ansatz/vqe_error_profile.py")
 
 == Backup: why HVA wins — optimizer trajectories
 #speaker-note[The endpoint comparison in the main deck understates the gap, so here's the full trajectory: Delta E against Adam step number, one curve per ansatz, at a single representative field deep in the ordered phase. HEA plateaus early, at an error orders of magnitude above where HVA and QAOA end up -- and both keep descending well past where HEA has stalled. This data was sitting in VQEResult.history the whole time, collected during every optimization run but discarded once the final energy was logged; plotting it directly is what makes the trainability gap visible rather than merely inferred from endpoint numbers.]
@@ -403,39 +403,42 @@ Bottom panel: gradient variance against field for both, at N=8. HVA's is two to 
 - This is the same physics as the main-deck dispersion slide, carried through to the explicit matrix diagonalization
 
 == Backup: codebase layout
-#speaker-note[For anyone curious how this is organized: one loader module wrapping qml.data.load into a typed IsingData dataclass, one shared plotting module for consistent style and an N-to-color mapping, and then one source file per physics question -- order parameter and Binder cumulant, entanglement and central charge, finite-size scaling, boundary comparison, the 2D lattice analysis, Jordan-Wigner, classical shadows, the two VQE ansätze, optimizer trajectories, and the trainability benchmark. Every source module is mirrored by its own test module, 63 tests total. Nothing here is a monolith -- each physics question lives in its own file, gets its own tests, produces its own plot.]
+#speaker-note[For anyone curious how this is organized: `src/` is split into three subpackages by role. `core/` holds the loader module wrapping qml.data.load into a typed IsingData dataclass, the shared plotting module for consistent style and an N-to-color mapping, and the process-pool helper for the multi-restart VQE grids. `physics/` holds one source file per physics question -- order parameter and Binder cumulant, entanglement and central charge, finite-size scaling, boundary comparison, the 2D lattice analysis, Jordan-Wigner, classical shadows. `ansatz/` holds the two VQE ansätze, optimizer trajectories, the trainability benchmark, and the N x depth sweep. Every source module is mirrored by its own test module in the matching tests/ subpackage, 63 tests total. Nothing here is a monolith -- each physics question lives in its own file, gets its own tests, produces its own plot.]
 #text(size: 13pt)[
 ```
-data/           cached qspin .h5 files (git-ignored)
+data/               cached qspin .h5 files (git-ignored)
 src/
-  loader.py           qml.data.load -> typed IsingData dataclass
-  plotting.py         shared style / N->color map / save_fig
-  analysis.py         order parameter, Binder cumulant, data collapse
-  entanglement.py     entropy, central charge (open + closed)
-  finite_size_scaling.py   h_c(N) extrapolation, central charge vs N
-  boundary_comparison.py   open vs closed h_c
-  lattice_2d.py       rectangular-lattice analysis
-  jordan_wigner.py    analytic free-fermion cross-check
-  classical_shadow.py shadow-based order-parameter reconstruction
-  vqe.py / vqe_hva.py           HEA / HVA+QAOA ansätze + sweeps
-  optimizer_trajectory.py       per-step energy-error trajectories
-  vqe_error_profile.py          dE(h) + gradient variance vs field
-  trainability.py / benchmark.py   gradient variance, N x depth sweep
-  parallel.py         process-pool map for the multi-restart VQE grids
-                      16 modules, 2151 lines
-tests/          one test module per physics module (63 tests, pytest)
-                621 lines; plotting/parallel exercised indirectly
-plots/          generated figures (PNG), referenced by both outputs below
-report/report.md         written report — embeds plots/*.png
+  core/
+    loader.py             qml.data.load -> typed IsingData dataclass
+    plotting.py           shared style / N->color map / save_fig
+    parallel.py           process-pool map for multi-restart VQE grids
+  physics/
+    analysis.py           order parameter, Binder cumulant, data collapse
+    entanglement.py       entropy, central charge (open + closed)
+    finite_size_scaling.py   h_c(N) extrapolation, central charge vs N
+    boundary_comparison.py   open vs closed h_c
+    lattice_2d.py         rectangular-lattice analysis
+    jordan_wigner.py      analytic free-fermion cross-check
+    classical_shadow.py   shadow-based order-parameter reconstruction
+  ansatz/
+    vqe.py / vqe_hva.py           HEA / HVA+QAOA ansätze + sweeps
+    optimizer_trajectory.py       per-step energy-error trajectories
+    vqe_error_profile.py          dE(h) + gradient variance vs field
+    trainability.py / benchmark.py   gradient variance, N x depth sweep
+                          16 modules, 2151 lines
+tests/              mirrors src/ (core/physics/ansatz), 63 tests, pytest
+                    621 lines; plotting/parallel exercised indirectly
+plots/              generated figures (PNG), referenced by both outputs below
+report.md         written report — embeds plots/*.png
 presentation/            these slides — embed the *same* plots/*.png
 ```
 ]
 
 == Backup: how a result becomes a slide
-#speaker-note[This anticipates whether the numbers in this talk are trustworthy or just hand-typed into the slides. The pipeline: the cached qspin HDF5 data goes through loader.load_ising, producing one typed IsingData object per lattice-periodicity-layout combination; each physics question's source module takes that IsingData in and writes exactly one PNG to plots/, using the shared plotting helpers; report/report.md and this presentation both embed those same PNG files directly, by relative path -- no number in either document is re-typed by hand, everything is re-read from the code's own printed output. Pytest, 63 tests, gates every module before its plot is trusted. A code-quality pass caught a stale duplicate and five dead imports, and one specific fix -- excluding a trivial h=0 point from an average -- moved a headline number from roughly 38x to 23x; a later performance-and-robustness pass then reran the whole VQE grid with convergence-based training and four random restarts per point, and the ~23x held up as a proper median rather than a single-seed fluke. I mention this deliberately: it's exactly the kind of thing this direct pipeline is designed to catch and to firm up, precisely because there's no hand-typing step where a stale number could silently survive a code change.]
+#speaker-note[This anticipates whether the numbers in this talk are trustworthy or just hand-typed into the slides. The pipeline: the cached qspin HDF5 data goes through loader.load_ising, producing one typed IsingData object per lattice-periodicity-layout combination; each physics question's source module takes that IsingData in and writes exactly one PNG to plots/, using the shared plotting helpers; report.md and this presentation both embed those same PNG files directly, by relative path -- no number in either document is re-typed by hand, everything is re-read from the code's own printed output. Pytest, 63 tests, gates every module before its plot is trusted. A code-quality pass caught a stale duplicate and five dead imports, and one specific fix -- excluding a trivial h=0 point from an average -- moved a headline number from roughly 38x to 23x; a later performance-and-robustness pass then reran the whole VQE grid with convergence-based training and four random restarts per point, and the ~23x held up as a proper median rather than a single-seed fluke. I mention this deliberately: it's exactly the kind of thing this direct pipeline is designed to catch and to firm up, precisely because there's no hand-typing step where a stale number could silently survive a code change.]
 - `qspin` dataset (cached HDF5) $arrow$ `loader.load_ising()` $arrow$ one typed `IsingData` per (lattice, periodicity, layout)
 - Each physics question is one `src/*.py` module: takes `IsingData` in, writes one PNG to `plots/` out, via the shared `plotting.py` helpers
-- `report/report.md` and `presentation/tfim_talk.typ` both embed those same PNGs directly by relative path — no numbers are re-typed by hand, only re-read from the code's own printed output
+- `report.md` and `presentation/tfim_talk.typ` both embed those same PNGs directly by relative path — no numbers are re-typed by hand, only re-read from the code's own printed output
 - `pytest` (63 tests) gates every module before its plot is trusted; a code-quality pass fixed a stale duplicate and 5 dead imports, and excluding a trivial h=0 point moved the headline from ~38x to ~23x — which then *held* under a later multi-restart (median $plus.minus$ IQR) rerun, all caught/confirmed precisely *because* the pipeline is this direct
 
 == Backup: dataset provenance

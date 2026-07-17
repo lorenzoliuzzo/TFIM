@@ -55,18 +55,21 @@ Each datapoint holds **100 values of `h` swept over [0.0, 3.0]**, with these att
 
 ## Repo layout
 - `data/`          — cached dataset `.h5` files (git-ignored; large)
-- `src/`           — reusable Python modules (loaders, VQE, observables)
+- `src/`           — reusable Python modules, split by role: `core/` (loader,
+  plotting, process-pool), `physics/` (order parameter, entanglement,
+  finite-size scaling, boundary/lattice studies, Jordan-Wigner, classical
+  shadows), `ansatz/` (VQE/QAOA ansätze, trainability, benchmarks)
 - `notebooks/`     — exploratory Jupyter notebooks
-- `tests/`         — pytest tests for `src/`
+- `tests/`         — pytest tests mirroring `src/`'s `core/`/`physics/`/`ansatz/`
 - `plots/`         — generated figures
-- `report/`        — the written report (`report.md`, living document)
+- `report.md`      — the written report (living document)
 - `presentation/`  — slides
 - `PLAN.md`, `TODO.md`, `CHANGELOG.md` — project tracking
 
 ## Conventions
 - Type hints on all signatures; `pathlib` over `os.path`; `ruff` for lint/format.
 - Tests alongside new code (`pytest`); mock only at system boundaries.
-- Figures saved to `plots/` as PNG; reference them from `report/report.md`.
+- Figures saved to `plots/` as PNG; reference them from `report.md`.
 
 ## Status / next steps
 - [x] Environment + dataset access working.
@@ -88,6 +91,6 @@ Each datapoint holds **100 values of `h` swept over [0.0, 3.0]**, with these att
 - [x] `src/boundary_comparison.py`: closed-chain h_c (0.93, 1.01, 1.01 for N=4,8,16) converges to the exact h_c=1 far faster than open (0.61, 0.78, 0.91) — periodic BC removes the open chain's two-end finite-size correction (`plots/boundary_comparison_hc.png`).
 - [x] `src/lattice_2d.py`: rectangular layouts (2x2/2x4/2x8/4x4), previously untouched. h_c grows with connectivity: 0.93→1.31→1.61→1.88, trending toward the known square-lattice h_c≈3.044. No central-charge fit here (2D entanglement follows a boundary-area law, not the 1D CFT log law).
 - [x] `src/classical_shadow.py`: reconstructs √⟨M_z²⟩ from `shadow_basis`/`shadow_meas` via `qml.ClassicalShadow.expval` — the one NISQ-realistic (shot-noise) result in the report; ⟨|M_z|⟩ itself is nonlinear so not a direct shadow observable, but √⟨M_z²⟩ coincides with it when the ground state's magnetization is sharply two-valued.
-- [x] `report/report.md` Secs. 5–7 and Abstract filled in, incorporating all of the above.
+- [x] `report.md` Secs. 5–7 and Abstract filled in, incorporating all of the above.
 - Field range is layout-dependent: 1x4→[0,3], 1x8→[0,3.5], 1x16→[0,3.75]; always 100 points, always straddles h=1.
 - Reference project for more ideas: `../../M4P/project/tfim_baseline` (exact ED/Jordan-Wigner/Onsager, QAOA, annealing, DMRG, Hopfield, barren plateaus) — Jordan-Wigner cross-check now landed; DMRG/Hopfield/annealing-dynamics still untouched.
