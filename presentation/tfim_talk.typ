@@ -20,7 +20,7 @@
 == Phase transitions and the classical Ising model
 #speaker-note[Let's start with the classical picture everyone already knows, because the quantum story is going to be the same question asked a different way. A phase transition is formally a non-analyticity of a thermodynamic potential -- Ehrenfest's classification just asks which derivative of the free energy first jumps or diverges: a discontinuity in the first derivative is first-order, like ice melting; a divergence in the second derivative is continuous, like the Curie point. For a symmetry-breaking transition specifically, we track an order parameter that's identically zero in the disordered phase and becomes nonzero -- and non-unique -- once the symmetry breaks.
 
-Grounding this in a concrete model: the classical Ising Hamiltonian is H = -(1/2) sum over nearest-neighbor pairs of J sigma_i sigma_j, each spin sigma_i = ±1. It's invariant under flipping every spin at once -- a global Z_2 symmetry -- and the order parameter is the magnetization m, which the system spontaneously breaks below T_C by picking one of the two symmetry-related ground states.
+Grounding this in a concrete model: the classical Ising Hamiltonian is H = -J times the sum over nearest-neighbor pairs of sigma_i sigma_j, each spin sigma_i = ±1. It's invariant under flipping every spin at once -- a global Z_2 symmetry -- and the order parameter is the magnetization m, which the system spontaneously breaks below T_C by picking one of the two symmetry-related ground states.
 
 The reason for this table is the 1D versus 2D contrast, the classical precursor to the quantum story. In 1D, a domain wall costs a fixed energy 2J but the entropy of where to place it grows like k_B T ln N, so Delta F = 2J - k_B T ln N is negative for any T>0 as N grows -- thermal fluctuations always win, no finite-temperature transition. In 2D, Onsager showed in 1944 the transition survives, because the domain wall's boundary is itself extensive, enough room to pay the entropy cost. Mean-field theory gets the 1D chain qualitatively wrong -- it predicts a transition where there isn't one -- which sets up the question of what quantum fluctuations, instead of thermal ones, can do that mean-field also can't capture.]
 #grid(
@@ -28,7 +28,7 @@ The reason for this table is the 1D versus 2D contrast, the classical precursor 
   gutter: 14pt,
   align(horizon)[
     - Phase transition = non-analyticity of a thermodynamic potential; symmetry-breaking $arrow$ an *order parameter* zero in the disordered phase, nonzero (and non-unique) in the ordered one
-    #text(size: 0.9em)[$ H=-1/2 sum_(chevron.l i,j chevron.r) J sigma_i sigma_j, quad sigma_i=plus.minus 1 $]
+    #text(size: 0.9em)[$ H=-J sum_(chevron.l i,j chevron.r) sigma_i sigma_j, quad sigma_i=plus.minus 1 $]
     - $bb(Z)_2$ symmetry: invariant under the global flip $sigma_i arrow -sigma_i$; order parameter = magnetization $m$
   ],
   align(horizon + center)[#figure(image("assets/phase_transition_states.png", width: 100%), caption: [First-order: ice $arrow$ water $arrow$ vapor])],
@@ -41,14 +41,14 @@ The reason for this table is the 1D versus 2D contrast, the classical precursor 
 )
 
 == The transverse-field Ising model
-#speaker-note[Here's the conceptual jump, and the model we'll actually work with. A quantum phase transition happens at exactly T=0, driven not by thermal fluctuations but by quantum ones, and the signature is the same kind of non-analyticity as before, except now it's the ground-state energy that's non-analytic in some coupling g, not the free energy in temperature. We get quantum fluctuations in by promoting the classical spins to Pauli operators and adding a transverse field term proportional to sigma^x; since sigma^x doesn't commute with sigma^z, this genuinely drives quantum dynamics -- tunnelling between the classical spin configurations -- not just a relabeling. That gives the actual model on the slide: H = J times the sum of ZZ couplings over nearest-neighbor bonds, plus h times the sum of X on every site, J=-1 by convention. I've defined the order parameter here too, the expectation of |M_z|, which we track throughout. The reason to write down the two solvable limits in the table before doing anything numerical is that they're qualitatively different, and that alone forces a transition somewhere in between. When g = h/|J| is much greater than 1 the field term dominates and the ground state is the uncorrelated product state with every spin along +x -- a trivial paramagnet. When g is much less than 1 the coupling term dominates and you get the two classical ferromagnetic ground states back, all up or all down along z. You can't smoothly deform an uncorrelated product state into a two-fold-degenerate symmetry-broken one without something singular happening in between. One subtlety on the last bullet: on any finite lattice, what would be a level crossing is smoothed into an avoided crossing, so the ground-state energy is perfectly smooth at finite N; it only sharpens into a true non-analyticity in the thermodynamic limit, N to infinity -- which is exactly why finite-size scaling later matters. For the 1D infinite chain that critical point sits at exactly g_c=1, and the rest of the talk pins that number down three independent ways and then reproduces it on a quantum computer.]
+#speaker-note[Here's the conceptual jump, and the model we'll actually work with. A quantum phase transition happens at exactly T=0, driven not by thermal fluctuations but by quantum ones, and the signature is the same kind of non-analyticity as before, except now it's the ground-state energy that's non-analytic in some coupling g, not the free energy in temperature. We get quantum fluctuations in by promoting the classical spins to Pauli operators and adding a transverse field term proportional to sigma^x; since sigma^x doesn't commute with sigma^z, this genuinely drives quantum dynamics -- tunnelling between the classical spin configurations -- not just a relabeling. That gives the actual model on the slide: H = J times the sum of ZZ couplings over nearest-neighbor bonds, plus h times the sum of X on every site, J=-1 by convention. I've defined the order parameter here too, the expectation of |M_z|, which we track throughout. The reason to write down the two solvable limits in the table before doing anything numerical is that they're qualitatively different, and that alone forces a transition somewhere in between. When g = h/|J| is much greater than 1 the field term dominates and the ground state is the uncorrelated product state |-> on every site -- the sigma-x = -1 eigenstate, since the field term enters with a plus sign in this convention -- a trivial paramagnet. Same minus state the HVA uses later as its reference. When g is much less than 1 the coupling term dominates and you get the two classical ferromagnetic ground states back, all up or all down along z. You can't smoothly deform an uncorrelated product state into a two-fold-degenerate symmetry-broken one without something singular happening in between. One subtlety on the last bullet: on any finite lattice, what would be a level crossing is smoothed into an avoided crossing, so the ground-state energy is perfectly smooth at finite N; it only sharpens into a true non-analyticity in the thermodynamic limit, N to infinity -- which is exactly why finite-size scaling later matters. For the 1D infinite chain that critical point sits at exactly g_c=1, and the rest of the talk pins that number down three independent ways and then reproduces it on a quantum computer.]
 - QPT: transition at $T=0$ driven by quantum (not thermal) fluctuations — the *ground-state energy* becomes non-analytic in a coupling $g$
 - Promote the Ising spins to Pauli operators and add a transverse field $sigma^x$ that does *not* commute with $sigma^z$ $arrow$ quantum dynamics (tunnelling between classical configurations)
 #text(size: 0.82em)[$ H = J sum_(chevron.l i,j chevron.r) sigma_i^z sigma_j^z + h sum_i sigma_i^x, quad J=-1, quad chevron.l |M_z| chevron.r = chevron.l |sum_i sigma_i^z| chevron.r $]
 #align(center)[#table(
   columns: (auto, auto, auto),
   table.header([regime], [ground state], [phase]),
-  [$g=h\/|J| gt.double 1$], [$product_i |arrow.r chevron.r_i$], [paramagnetic],
+  [$g=h\/|J| gt.double 1$], [$product_i |minus chevron.r_i$ ($sigma^x = -1$)], [paramagnetic],
   [$g lt.double 1$], [$product_i |arrow.t chevron.r_i$ or $product_i |arrow.b chevron.r_i$], [ferromagnetic],
 )]
 - Finite $N$: avoided crossing (smooth); true non-analyticity only at $N arrow infinity$ — exact 1D critical point $g_c=1$
@@ -149,8 +149,8 @@ On the right, the central charge -- the universal fingerprint of the critical po
 #grid(
   columns: 2,
   gutter: 8pt,
-  figure(image("../plots/entropy_vs_field_chain_open.png", width: 92%), caption: [#text(size: 0.8em)[$S$ vs $h$: area law $arrow$ peak $arrow$ $ln 2$]]),
-  figure(image("../plots/central_charge_closed_N16.png", width: 92%), caption: [#text(size: 0.8em)[Closed chain: $c approx 0.51$ (Ising: $1\/2$)]]),
+  figure(image("../plots/entropy_vs_field_chain_open.png", width: 68%), caption: [#text(size: 0.8em)[$S$ vs $h$: area law $arrow$ peak $arrow$ $ln 2$]]),
+  figure(image("../plots/central_charge_closed_N16.png", width: 68%), caption: [#text(size: 0.8em)[Closed chain: $c approx 0.51$ (Ising: $1\/2$)]]),
 )
 #src-tag("src/physics/entanglement.py")
 
@@ -225,8 +225,8 @@ QAOA, on the next slide, is this same HVA circuit again -- reinterpreted and ini
 #grid(
   columns: 2,
   gutter: 8pt,
-  figure(image("../plots/ansatz_comparison_N8.png", width: 100%), caption: [$N=8$: median $|Delta E|$ $2.8 times 10^(-1)$ (HEA) $arrow$ $1.2 times 10^(-2)$ (HVA), $approx 23 times$]),
-  figure(image("../plots/ansatz_comparison_N16.png", width: 100%), caption: [$N=16$: $1.8 times 10^1$ (HEA) $arrow$ $2.1 times 10^(-1)$ (HVA), $approx 85 times$]),
+  figure(image("../plots/ansatz_comparison_N8.png", width: 80%), caption: [$N=8$: median $|Delta E|$ $2.8 times 10^(-1)$ (HEA) $arrow$ $1.2 times 10^(-2)$ (HVA), $approx 23 times$]),
+  figure(image("../plots/ansatz_comparison_N16.png", width: 80%), caption: [$N=16$: $1.8 times 10^1$ (HEA) $arrow$ $2.1 times 10^(-1)$ (HVA), $approx 85 times$]),
 )
 #src-tag("src/ansatz/vqe.py", "src/ansatz/vqe_hva.py", "src/ansatz/benchmark.py")
 
@@ -262,7 +262,7 @@ The right panel is the operational face of that: HEA alone, swept over circuit d
 - Reproduced the TFIM phase transition from exact data, an independent analytic (Jordan-Wigner) solution, and VQE — all agree
 - Physics-informed ansatz (HVA) beats generic HEA on accuracy and trainability
 - Periodic boundaries resolve two open-chain artifacts at once: the central-charge bias and the slow $h_c$ convergence
-- Extended scope (backup): 2D lattices (h_c grows with connectivity) and classical-shadow reconstruction (the NISQ-realistic result)
+- Extended scope (backup): 2D lattices ($h_c$ grows with connectivity) and classical-shadow reconstruction (the NISQ-realistic result)
 - Open: combined order-parameter + entropy figure; error bars on the finite-size fits (only 3 system sizes)
 
 #focus-slide[Thank you]
@@ -275,14 +275,14 @@ The right panel is the operational face of that: HEA alone, swept over circuit d
 #speaker-note[This is the main-deck "route one" carried through. Slice Z = Tr(e^{-beta H}) into M imaginary-time steps; each slice becomes an extra classical Ising layer, so you land on the partition function of a classical 2D anisotropic Ising model, N sites by M time-slices -- imaginary time literally is the second spatial dimension. The quantum coupling g maps onto the classical anisotropy gamma via this tanh formula. Onsager solved the anisotropic 2D classical Ising critical point exactly in 1944: sinh(2 beta J_x^c) sinh(2 beta J_y^c) = 1. Substitute the mapped anisotropy back in, take M to infinity -- same as T to zero on the quantum side -- and you get g_c = 1 for every value of J. Exact and non-perturbative: no series expansion, no fit. This is genuinely where h_c=1 comes from, and it's the sufficient condition -- an actual non-analyticity of the free energy -- as opposed to Jordan-Wigner's necessary vanishing gap.]
 - Suzuki-Trotter: slice $Z="Tr"(e^(-beta H))$ into $M$ imaginary-time steps $arrow$ partition function of a *classical* 2D anisotropic Ising model, $N$ sites $times.o$ $M$ time-slices — imaginary time *is* the second spatial dimension
 - Quantum coupling $g$ becomes a classical anisotropy $beta^*J_y=gamma=-1/2 ln[tanh(beta J g\/M)]$
-- Onsager's exact 2D critical point, $sinh(2beta J_x^c)sinh(2beta J_y^c)=1$, substituted back with $M arrow infinity$ (i.e. $T arrow 0$) gives $g^c=1$ for *every* $J$
+- Onsager's exact 2D critical point, $sinh(2beta J_x^c)sinh(2beta J_y^c)=1$, substituted back with $M arrow infinity$ (i.e. $T arrow 0$) gives $g_c=1$ for *every* $J$
 - Exact and non-perturbative: no series expansion, no fit — and it gives the non-analyticity of the free energy itself (*sufficient* for a QPT), where JW's vanishing gap is only *necessary*
 
 == Backup: data collapse
 #speaker-note[This is the finite-size scaling result I skipped in the main deck. Rescale the order parameter by N^{beta/nu} and the field axis by N^{1/nu}: if curves for different N fall onto a single universal curve under that rescaling, that's strong independent confirmation of both the critical point location and the universality class -- and crucially it needs no central charge at all. It collapses only for the correct h_c and the correct exponents simultaneously, which is what makes it a sharp test rather than a fit. The exponents used, beta=1/8 and nu=1, are the 2D classical Ising exponents -- 2D because of the imaginary-time dimension from the Suzuki-Trotter mapping, which is the same correspondence as the theory section.]
 - Data collapse: $(chevron.l |M_z| chevron.r \/ N) N^(beta\/nu) = f[(h-h_c) N^(1\/nu)]$ — collapses *only* for the correct $h_c$ *and* exponents, so it fixes location + universality class at once (no central charge needed)
 - $beta=1\/8$, $nu=1$ are the 2D-Ising exponents (the imaginary-time dimension of the Suzuki-Trotter mapping)
-#figure(image("../plots/data_collapse_chain_open.png", width: 74%))
+#figure(image("../plots/data_collapse_chain_open.png", width: 62%))
 
 == Backup: why we don't quote an $h_c (infinity)$
 #speaker-note[This anticipates the obvious question after the finite-size slide: you have h_c at three sizes drifting toward 1 -- why not just fit the scaling ansatz and extrapolate to N=infinity, and quote that number? Because we tried, and it doesn't work, and I'd rather show you that than quietly omit it.
@@ -300,8 +300,8 @@ Right panel is the same story for the central charge: c drifts 0.588, 0.608, 0.6
 #grid(
   columns: 2,
   gutter: 8pt,
-  figure(image("../plots/finite_size_hc_chain_open.png", width: 92%), caption: [#text(size: 0.75em)[Free 3-point fit overshoots $h_c=1$]]),
-  figure(image("../plots/central_charge_scaling_chain_open.png", width: 92%), caption: [#text(size: 0.75em)[$c$ drifts *away* from $1\/2$ — boundary bias]]),
+  figure(image("../plots/finite_size_hc_chain_open.png", width: 74%), caption: [#text(size: 0.75em)[Free 3-point fit overshoots $h_c=1$]]),
+  figure(image("../plots/central_charge_scaling_chain_open.png", width: 74%), caption: [#text(size: 0.75em)[$c$ drifts *away* from $1\/2$ — boundary bias]]),
 )
 #src-tag("src/physics/finite_size_scaling.py")
 
@@ -355,10 +355,10 @@ Bottom panel: gradient variance against field for both, at N=8. HVA's is two to 
 )
 
 == Backup: why $sqrt(chevron.l M_z^2 chevron.r)$?
-#speaker-note[This anticipates why we don't just estimate the order parameter directly from the shadow data. Classical shadows only give unbiased estimators for functionals of rho that are linear -- expectation of O equals trace of rho O, for some operator O -- a hard requirement, not a technical inconvenience. The expectation of |M_z| is not linear in rho, because of the absolute value, so no shadow protocol, however clever, can estimate it directly. But M_z squared is linear -- expand it out and it's N plus the sum over i not equal j of the expectation of Z_i Z_j, a genuine two-body Pauli observable, perfectly estimable from shadows. So what we actually reconstruct is the square root of the shadow estimate of M_z squared. In the deep ordered phase, where M_z only ever takes the two values plus or minus m, this coincides exactly with the true |M_z|. Away from that limit, particularly near criticality where M_z has a broader distribution, it's only an approximation, and that's where the reconstruction in the figures deviates a bit from the exact order parameter.]
+#speaker-note[This anticipates why we don't just estimate the order parameter directly from the shadow data. Classical shadows only give unbiased estimators for functionals of rho that are linear -- expectation of O equals trace of rho O, for some operator O -- a hard requirement, not a technical inconvenience. The expectation of |M_z| is not linear in rho, because of the absolute value, so no shadow protocol, however clever, can estimate it directly. But the expectation of M_z squared is a linear functional -- expand the operator and its expectation is N plus the sum over i not equal j of the expectation of Z_i Z_j, a genuine two-body Pauli observable, perfectly estimable from shadows. So what we actually reconstruct is the square root of the shadow estimate of M_z squared. In the deep ordered phase, where M_z only ever takes the two values plus or minus m, this coincides exactly with the true |M_z|. Away from that limit, particularly near criticality where M_z has a broader distribution, it's only an approximation, and that's where the reconstruction in the figures deviates a bit from the exact order parameter.]
 - Classical shadows give unbiased estimators of *linear* functionals of $rho$ only: $chevron.l O chevron.r = "Tr"(rho O)$ for an operator $O$
 - $chevron.l |M_z| chevron.r$ is *not* linear in $rho$ (absolute value), so it cannot be estimated this way — no shadow protocol gets around this
-- $M_z^2 = sum_i Z_i^2 + sum_(i eq.not j) Z_i Z_j = N + sum_(i eq.not j) chevron.l Z_i Z_j chevron.r$ *is* linear — a genuine two-body Pauli observable
+- $M_z^2 = sum_i Z_i^2 + sum_(i eq.not j) Z_i Z_j$, so $chevron.l M_z^2 chevron.r = N + sum_(i eq.not j) chevron.l Z_i Z_j chevron.r$ *is* linear — a genuine two-body Pauli observable
 - If $M_z$ only ever takes values $plus.minus m$ (deep ordered phase), $chevron.l |M_z| chevron.r = m = sqrt(chevron.l M_z^2 chevron.r)$ exactly; elsewhere it is an approximation, worst near criticality
 
 == Backup: fixing the central-charge bias
@@ -370,8 +370,8 @@ Bottom panel: gradient variance against field for both, at N=8. HVA's is two to 
 #grid(
   columns: 2,
   gutter: 8pt,
-  figure(image("../plots/central_charge_open_N16.png", width: 92%), caption: [#text(size: 0.75em)[Open: $c approx 0.62$ — boundary present]]),
-  figure(image("../plots/central_charge_closed_N16.png", width: 92%), caption: [#text(size: 0.75em)[Closed: $c approx 0.51$ — bias gone]]),
+  figure(image("../plots/central_charge_open_N16.png", width: 74%), caption: [#text(size: 0.75em)[Open: $c approx 0.62$ — boundary present]]),
+  figure(image("../plots/central_charge_closed_N16.png", width: 74%), caption: [#text(size: 0.75em)[Closed: $c approx 0.51$ — bias gone]]),
 )
 
 == Backup: building the HVA circuit
