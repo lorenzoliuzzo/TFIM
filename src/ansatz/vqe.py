@@ -174,7 +174,7 @@ def plot_sweep(sweep: VQESweep, num_spins: int, *, out_path: Path | None = None)
     ax2.set_title("Order parameter")
 
     fig.suptitle(f"VQE vs exact — TFIM chain, N={num_spins}")
-    return save_fig(fig, "vqe_vs_exact_1x4", out_path=out_path)
+    return save_fig(fig, f"vqe_vs_exact_1x{num_spins}", out_path=out_path)
 
 
 if __name__ == "__main__":

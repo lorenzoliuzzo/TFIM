@@ -104,21 +104,13 @@ Refit the identical procedure, same formula, same code, on the periodic chain in
 
 ## Locating g_c: finite size and boundaries
 
-This slide is where finite-size scaling actually pays off, and it has two layers — a rough locator and a rigorous one.
+Here's the finite-size h_c estimate from the steepest-descent point of the order parameter, at three sizes, for both boundary conditions. Open chain: 0.61, 0.78, 0.91 at N=4, 8, 16 — drifting toward the thermodynamic value of 1 as N grows, exactly as expected, since finite systems round off the transition and pull the apparent critical point inward. As a cross-check, the steepest-descent of the order parameter and the crossover point of the entanglement entropy agree at each N — reassuring, since they come from completely different quantities.
 
-The rough one is the table: h_c estimated from the steepest-descent point of the order parameter — the field where ⟨|M_z|⟩ falls off fastest, the finite-N stand-in for the transition. It reads 0.61 at N=4, 0.78 at N=8, 0.91 at N=16, drifting toward the thermodynamic value of 1 as N grows. That drift is expected physics, not error: a finite system rounds off the transition and pulls the apparent critical point inward, and the rounding shrinks as N grows. As a sanity check, this steepest-descent estimate agrees at every N with the entropy crossover from the entropy slide — the magnetization and the entanglement, two completely different quantities, pointing at the same field.
+Now the boundary comparison, in the same table. Periodic boundaries have no chain ends at all, so there's no boundary-driven finite-size correction to fight, and the closed chain converges to 1 much faster — already 1.01 by N=8, where the open chain is still at 0.78. Quantitatively that's the finite-size scaling ansatz on the slide: the open chain simply has a much larger prefactor a, because of the extra boundary operators. Note this is the same boundary physics that biased the central charge two slides ago — one cause, two symptoms.
 
-The rigorous layer is the data collapse in the figure, and this is the real content of the slide. The idea: near a continuous transition the order parameter isn't an independent function of h and N — the scaling hypothesis says it's a function of a single combined variable. Rescale the x-axis by (h - h_c) N^(1/ν) and the y-axis by N^(β/ν), and curves that looked different for each N should all fall on top of each other, onto one universal function f. The x-rescaling measures distance from criticality in units of how many correlation lengths fit in the box; the y-rescaling undoes the finite-size suppression of the order parameter.
+Honest caveat: only three system sizes, so what I'm calling an extrapolation is really an exact interpolation through three points, not an error-barred fit — I wouldn't overstate the precision of that h_c(infinity) intercept.
 
-Here's why that's powerful: the collapse only works if you feed in *both* the correct h_c *and* the correct critical exponents. Put in the wrong critical point, or the wrong exponents, and the curves refuse to line up. So a clean collapse confirms two things at once — where the transition is (h_c → 1) and which universality class it's in (through β = 1/8, ν = 1) — and it does so with no reference to the central charge at all. That's why it counts as independent confirmation rather than a restatement of the earlier slides.
-
-One point someone may catch: why 2D Ising exponents for a 1D chain? Because of the Suzuki-Trotter mapping from the theory section — the 1D quantum chain is equivalent to a 2D classical Ising model, imaginary time being the extra dimension, so it's the 2D classical exponents, β = 1/8 and ν = 1, that govern the quantum critical point.
-
-This compares the finite-size h_c estimate, open versus closed chain, at matched N. Periodic boundaries have no chain ends at all, so there's no boundary-driven finite-size correction to fight, and the closed-chain estimate converges to the thermodynamic value of 1 much faster — already 1.01 by N=8, whereas the open chain is still 0.78 there and only reaches 0.91 by N=16.
-
-Quantitatively this is the finite-size scaling ansatz below, and the open chain simply has a much larger prefactor a on that correction because of the extra boundary operators. One honest caveat: we only have three system sizes, so what I'm calling an extrapolation is really an exact interpolation through three points, not an error-barred fit — I wouldn't overstate the precision of that h_c(infinity) intercept.
-
-*Note: this is the same boundary physics that biased the central charge — one cause, two symptoms. Data collapse moved to backup.*
+If asked about data collapse: it's in backup — rescaling the order parameter by N^(β/ν) collapses curves for different N onto one universal curve, which fixes location and universality class at once, without needing the central charge.
 
 ---
 
@@ -157,8 +149,6 @@ QAOA reuses the literal same HVA circuit, but reinterprets it and initializes it
 One Trotter step of that sweep is exactly one HVA layer: H_B is the sum of X, the mixer, H_C is the ZZ coupling — same (γ,β) circuit, reinterpreted as digitized annealing rather than a generic variational ansatz. The annealing-inspired init seeds layer l at s_l=(l+1/2)/p, with γ_l = s_l·δt and β_l=(1-s_l)·δt — placing the optimizer directly in the basin a slow physical anneal would follow, instead of random angles.
 
 As p goes to infinity with a slow enough schedule, this reproduces exact adiabatic evolution; at finite p, the residual energy error directly measures the cost of digitizing that continuous sweep into discrete Trotter steps.
-
----
 
 Worth flagging forward: because QAOA is the *same circuit* as HVA, it inherits HVA's trainability wholesale — which is why the barren-plateau table two slides on reports a single shared HVA/QAOA column rather than three separate ansätze.
 
@@ -322,7 +312,7 @@ This goes one level deeper than the main-deck derivation, carrying the Fourier-p
 
 Notational note if anyone compares this against the main-deck dispersion slide: that one was written as ε(k) = 2 sqrt(1 + g² - 2g cos k) — the sign in front of the cosine differs, and that's a momentum-origin convention difference: q here is shifted by π relative to k there, since cos(k+π) = -cos(k) — same physics, same spectrum, different labeling of where q=0 sits.
 
-The ground state fills every negative-energy mode, the lambda-minus band; the gap is λ_+ minus λ_-, minimized at q=0, vanishing there exactly at g=1 — the same physics as the main-deck slide, carried through to the explicit diagonalization.
+The ground state fills every negative-energy mode, the lambda-minus band; the gap is λ_+ minus λ_-, minimized at q=π — since this q's origin is shifted by π relative to the main-deck k, that's the same point as k=0 there — vanishing there exactly at g=1 — the same physics as the main-deck slide, carried through to the explicit diagonalization.
 
 ---
 

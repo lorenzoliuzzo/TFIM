@@ -210,7 +210,7 @@ QAOA, on the next slide, is this same HVA circuit again -- reinterpreted and ini
 - HVA reference state $|- chevron.r^(times.o N)$ = the *exact* ground state at $g arrow infinity$; *warm-start* sweeps $h$ high$arrow$low, each field initialized from the previous optimum — transporting the easy solution into the entangled regime
 
 == QAOA as digitized quantum annealing
-#speaker-note[QAOA reuses the literal same HVA circuit, but reinterprets and initializes it differently. The physical picture is an adiabatic path from an easy Hamiltonian H_B to the target H_C: H(s) = (1-s)H_B + s H_C, sweeping s from 0 to 1 slowly -- the adiabatic theorem guarantees the ground state is tracked, provided s varies slowly relative to the instantaneous gap. One Trotter step of that sweep is exactly one HVA layer: H_B is the sum of X, the mixer; H_C is the ZZ coupling -- same (gamma,beta) circuit, reinterpreted as digitized annealing rather than a generic variational ansatz. The annealing-inspired init seeds layer l at s_l=(l+1/2)/p, with gamma_l = s_l·delta t and beta_l=(1-s_l)·delta t -- placing the optimizer directly in the basin a slow physical anneal would follow, instead of random angles. As p goes to infinity with a slow enough schedule this reproduces exact adiabatic evolution; at finite p the residual energy error measures the cost of digitizing that continuous sweep into discrete Trotter steps. Worth flagging forward: because QAOA is the same circuit as HVA, it inherits HVA's trainability wholesale -- which is why the barren-plateau table two slides on reports a single shared HVA/QAOA column rather than three separate ansaetze.]
+#speaker-note[QAOA reuses the literal same HVA circuit, but reinterprets and initializes it differently. The physical picture is an adiabatic path from an easy Hamiltonian H_B to the target H_C: H(s) = (1-s)H_B + s H_C, sweeping s from 0 to 1 slowly -- the adiabatic theorem guarantees the ground state is tracked, provided s varies slowly relative to the instantaneous gap. One Trotter step of that sweep is exactly one HVA layer: H_B is the sum of X, the mixer; H_C is the ZZ coupling -- same (gamma,beta) circuit, reinterpreted as digitized annealing rather than a generic variational ansatz. The annealing-inspired init seeds layer l at s_l=(l+1/2)/p, with gamma_l = s_l·delta t and beta_l=(1-s_l)·delta t -- placing the optimizer directly in the basin a slow physical anneal would follow, instead of random angles. As p goes to infinity with a slow enough schedule this reproduces exact adiabatic evolution; at finite p the residual energy error measures the cost of digitizing that continuous sweep into discrete Trotter steps. Worth flagging forward: because QAOA is the same circuit as HVA, it inherits HVA's trainability wholesale -- which is why the barren-plateau table two slides on reports a single shared HVA/QAOA column rather than three separate ansätze.]
 - Adiabatic path from an easy Hamiltonian to $H$ itself: $H(s) = (1-s)H_B + s H_C$, $s:0 arrow 1$ slowly — the adiabatic theorem guarantees the ground state is tracked if $s$ varies slowly enough relative to the gap
 - One Trotter step of this sweep *is* one HVA layer: $H_B=sum_i X_i$ (mixer), $H_C$ = the ZZ coupling — the same $(gamma,beta)$ circuit, reinterpreted
 - *Annealing-inspired init*: layer $l$ seeded at $s_l=(l+1\/2)\/p$ with $gamma_l = s_l dot.c delta t$, $beta_l=(1-s_l) dot.c delta t$ — places the optimizer in the basin a slow anneal would follow, instead of starting at random
@@ -340,8 +340,8 @@ Bottom panel: gradient variance against field for both, at N=8. HVA's is two to 
 #grid(
   columns: 2,
   gutter: 8pt,
-  figure(image("../plots/order_parameter_rectangular_open.png", width: 100%)),
-  figure(image("../plots/entropy_rectangular_open.png", width: 100%)),
+  figure(image("../plots/order_parameter_rectangular_open.png", width: 100%), caption: [#text(size: 0.75em)[Order parameter, 2x2/2x4/2x8/4x4]]),
+  figure(image("../plots/entropy_rectangular_open.png", width: 100%), caption: [#text(size: 0.75em)[Entanglement entropy, 2x2/2x4/2x8/4x4]]),
 )
 
 == Backup: classical-shadow reconstruction
@@ -350,8 +350,8 @@ Bottom panel: gradient variance against field for both, at N=8. HVA's is two to 
 #grid(
   columns: 2,
   gutter: 8pt,
-  figure(image("../plots/shadow_reconstruction_N4.png", width: 100%)),
-  figure(image("../plots/shadow_reconstruction_N8.png", width: 100%)),
+  figure(image("../plots/shadow_reconstruction_N4.png", width: 100%), caption: [#text(size: 0.75em)[$N=4$]]),
+  figure(image("../plots/shadow_reconstruction_N8.png", width: 100%), caption: [#text(size: 0.75em)[$N=8$]]),
 )
 
 == Backup: why $sqrt(chevron.l M_z^2 chevron.r)$?
@@ -396,10 +396,10 @@ Bottom panel: gradient variance against field for both, at N=8. HVA's is two to 
 - VQE/QAOA circuits alone would happily scale further; it is the exact cross-checks (ED, entanglement, JW) that anchor $N$ at 16
 
 == Backup: Jordan-Wigner, the diagonalization in full
-#speaker-note[This goes one level deeper than the main-deck derivation, carrying the Fourier-plus-Bogoliubov claim all the way to the explicit matrix. After Jordan-Wigner and a Fourier transform, the Hamiltonian block-diagonalizes into 2-by-2 sectors, each coupling mode q to mode minus q, shown here explicitly. Diagonalizing that 2-by-2 kernel gives the two bands below. Notational note if anyone compares this against the main-deck dispersion slide: that one was written as epsilon(k) = 2 sqrt(1 + g^2 - 2g cos k) -- the sign in front of the cosine differs, and that's a momentum-origin convention difference: q here is shifted by pi relative to k there, since cos(k+pi) = -cos(k) -- same physics, same spectrum, different labeling of where q=0 sits. The ground state fills every negative-energy mode, the lambda-minus band; the gap is lambda_+ minus lambda_-, minimized at q=0, vanishing there exactly at g=1 -- the same physics as the main-deck slide, carried through to the explicit diagonalization.]
+#speaker-note[This goes one level deeper than the main-deck derivation, carrying the Fourier-plus-Bogoliubov claim all the way to the explicit matrix. After Jordan-Wigner and a Fourier transform, the Hamiltonian block-diagonalizes into 2-by-2 sectors, each coupling mode q to mode minus q, shown here explicitly. Diagonalizing that 2-by-2 kernel gives the two bands below. Notational note if anyone compares this against the main-deck dispersion slide: that one was written as epsilon(k) = 2 sqrt(1 + g^2 - 2g cos k) -- the sign in front of the cosine differs, and that's a momentum-origin convention difference: q here is shifted by pi relative to k there, since cos(k+pi) = -cos(k) -- same physics, same spectrum, different labeling of where q=0 sits. The ground state fills every negative-energy mode, the lambda-minus band; the gap is lambda_+ minus lambda_-, minimized at q=pi -- since this q's origin is shifted by pi relative to the main-deck k, that's the same point as k=0 there -- vanishing there exactly at g=1 -- the same physics as the main-deck slide, carried through to the explicit diagonalization.]
 - After Jordan-Wigner + Fourier transform ($hat(a)_j = N^(-1\/2)sum_q hat(a)_q e^(i q j)$), the Hamiltonian block-diagonalizes into $2 times 2$ sectors $(hat(a)_q, hat(a)_(-q)^dagger)$: $hat(H) = sum_(q>0) mat(hat(a)_q^dagger, hat(a)_(-q);)mat(-J cos q - g J, -i J sin q; i J sin q, J cos q + g J;) mat(hat(a)_q; hat(a)_(-q)^dagger;)$
 - Diagonalizing this $2 times 2$ kernel gives two bands $lambda_plus.minus (q) = plus.minus J sqrt((cos q + g)^2 + sin^2 q) = plus.minus J sqrt(1+g^2+2g cos q)$
-- Ground state fills every negative-energy mode ($lambda_-$ band); the gap is $Delta(q)=lambda_+(q)-lambda_-(q)$, minimized at $q=0$, vanishing there exactly at $g=1$
+- Ground state fills every negative-energy mode ($lambda_-$ band); the gap is $Delta(q)=lambda_+(q)-lambda_-(q)$, minimized at $q=pi$ (this $q$'s origin is shifted by $pi$ relative to the main-deck $k$), vanishing there exactly at $g=1$
 - This is the same physics as the main-deck dispersion slide, carried through to the explicit matrix diagonalization
 
 == Backup: codebase layout

@@ -159,9 +159,12 @@ classical Ising configurations.
 
 $$ \hat H = -J\sum_{\langle i,j\rangle}\hat\sigma_i^z\hat\sigma_j^z
           - h\sum_i \hat\sigma_i^x $$
-(equivalently, in the dataset's sign convention with $J\to-J$ absorbed into
-the coupling, $\hat H = J\sum_{\langle i,j\rangle}\hat\sigma_i^z\hat\sigma_j^z
-+h\sum_i\hat\sigma_i^x$ with $J=-1$, as used throughout this report). Writing
+(equivalently, in the dataset's sign convention, $\hat H =
+J\sum_{\langle i,j\rangle}\hat\sigma_i^z\hat\sigma_j^z+h\sum_i\hat\sigma_i^x$
+with $J=-1$, as used throughout this report — the two forms describe the same
+physics: negating the coupling term is a basis change on one sublattice, and
+negating the field term is a global $\pi$-rotation about $z$, neither of
+which shifts the spectrum or the critical point). Writing
 $g=h/|J|$ for the dimensionless field, the two terms compete: the coupling
 term favours parallel neighbouring spins along $z$ (ferromagnetic order),
 while the field term favours every spin aligning along $x$ — the
@@ -603,20 +606,23 @@ $S$, the order parameter $\langle|M_z|\rangle$ (which does not depend on
 across the same region. `entanglement.quasi_degenerate_cutoff` detects and
 shades this region automatically rather than hiding or smoothing it.
 
-![Central charge fit, open chain](plots/central_charge_open_N16.png)
+![Central charge fit, open chain (N=16)](plots/central_charge_open_N16.png)
 
 Fitting the Calabrese-Cardy law on the open chain gives $c\approx0.61$
-($N=8$) and $c\approx0.62$ ($N=16$) against the Ising CFT value $c=1/2$ — a
-persistent $\sim20\%$ overshoot.
+at $N=8$ (not pictured) and $c\approx0.62$ at $N=16$ (shown above) against
+the Ising CFT value $c=1/2$ — a persistent $\sim20\%$ overshoot at both sizes.
 
-![Central charge fit, closed (periodic) chain](plots/central_charge_closed_N16.png)
+![Central charge fit, closed (periodic) chain (N=16)](plots/central_charge_closed_N16.png)
 
-Refitting the *same* extraction on the closed (periodic) chain, where the
-boundary-localized irrelevant operators responsible for the open-chain
-correction (Calabrese & Cardy, arXiv:1002.4353) are absent, gives
-$c\approx0.513$ ($N=8$) and $c\approx0.506$ ($N=16$) — within a few percent of
-$1/2$ at the *same* system sizes. This confirms the open-chain bias was a
-genuine finite-size boundary artifact, not a bug in the fit.
+Refitting the same regression on the closed (periodic) chain — same
+Calabrese-Cardy extraction, but with the ring's $c/3$ prefactor in place of
+the open chain's $c/6$, since translation invariance removes the two
+boundaries — where the boundary-localized irrelevant operators responsible
+for the open-chain correction (Calabrese & Cardy, arXiv:1002.4353) are also
+absent, gives $c\approx0.513$ at $N=8$ (not pictured) and $c\approx0.506$ at
+$N=16$ (shown above) — within a few percent of $1/2$ at both sizes. This
+confirms the open-chain bias was a genuine finite-size boundary artifact,
+not a bug in the fit.
 
 ### 6.3 Jordan-Wigner cross-check
 
@@ -661,6 +667,18 @@ sweep, reaches $1.2\times10^{-2}$ (and $1.8\times10^{-3}$ best-of-restarts) — 
 $\approx23\times$ improvement. The gap *widens* with system size: at $N=16$ the
 HEA median error is $1.8\times10^{1}$ (it has effectively stopped learning,
 Sec. 6.6) against the HVA's $2.1\times10^{-1}$, a $\approx85\times$ separation.
+
+![HEA vs HVA energy error and gradient variance vs field, N=8](plots/vqe_error_trainability_1x8.png)
+
+The median hides a field-dependent crossover worth nuancing: at $h=0$ (exact
+symmetry-broken product state) HEA is *better* by orders of magnitude
+($\sim10^{-6}$ vs HVA's $\sim0.9$); the two curves cross near $h\approx0.4$,
+after which HVA wins by up to $10^4$. HVA's single worst point sits deep in
+the ordered phase, where the warm start is exact only at $h\to\infty$ and the
+GHZ-like cat state instead needs circuit depth $\sim N/2$. The gradient
+variance panel shows HVA above HEA at *every* field, consistent with the
+$N=8$ row of the barren-plateau table below reproduced from an independent
+code path.
 
 ![Optimizer trajectories: HEA vs HVA vs QAOA](plots/optimizer_trajectories.png)
 
@@ -720,11 +738,25 @@ $N=16$. The same estimator on the closed (periodic) chain gives $0.93$,
 $1.01$, $1.01$ — already within a percent of the exact value at $N=8$.
 Periodic boundaries remove the two chain ends
 that otherwise contribute a finite-size correction, so this direction
-converges markedly faster than the open chain at matched $N$. (The three-point
-power-law fits used to extrapolate $h_c(\infty)$ are exact interpolations,
-not statistically meaningful regressions — with only the three available
-chain sizes, they should be read as a qualitative trend, not an error-barred
-result.)
+converges markedly faster than the open chain at matched $N$.
+
+![h_c(N) extrapolation and central charge vs N, open chain](plots/finite_size_hc_chain_open.png)
+![Central charge drift with N, open chain](plots/central_charge_scaling_chain_open.png)
+
+The left panel above is the extrapolation itself: a free 3-point fit of
+$h_c(N) = h_c(\infty) - a\,N^{-1/\nu}$ gives $h_c(\infty)=1.34$ (inflection)
+or $2.00$ (Binder — the fit runs to its own bound) and $\nu=2.58$/$8.57$
+against the exact $\nu=1$, and `curve_fit` cannot even estimate a covariance
+with three points and three free parameters. (The three-point power-law fits
+used to extrapolate $h_c(\infty)$ are exact interpolations, not statistically
+meaningful regressions — with only the three available chain sizes, they
+should be read as a qualitative trend, not an error-barred result.) This is
+why Sec. 6.1–6.2 and the presentation deck fix $\nu=1$ and never quote an
+extrapolated $h_c(\infty)$. The right panel shows the central charge instead
+*drifting away* from $1/2$ as $N$ grows on the open chain ($0.588\to
+0.608\to0.622$ for $N=4,8,16$) — the divergence-with-$N$ signature that
+first flagged the open-chain bias as boundary physics rather than a fitting
+bug (Sec. 6.2).
 
 ### 7.2 Summary of critical-point evidence
 
@@ -816,10 +848,9 @@ magnetization is sharply two-valued.
   https://pennylane.ai/demos/tutorial_quantum_phase_transitions — VQE +
   hardware-efficient ansatz on the 1D/2D TFIM, same $J/h=1$ transition; a
   useful cross-check baseline against our HVA/QAOA results.
-- L. Bittel, M. Kliesch et al. framework; see also A. Holmes et al.,
-  "Connecting Ansatz Expressibility to Gradient Magnitudes and Barren
-  Plateaus," [arXiv:2101.02138](https://arxiv.org/abs/2101.02138), *PRX
-  Quantum* 3, 010313 (2022). Formalizes the expressibility/trainability
+- A. Holmes et al., "Connecting Ansatz Expressibility to Gradient Magnitudes
+  and Barren Plateaus," [arXiv:2101.02138](https://arxiv.org/abs/2101.02138),
+  *PRX Quantum* 3, 010313 (2022). Formalizes the expressibility/trainability
   trade-off behind our `trainability.py` finding that HEA decays with $N$
   while HVA/QAOA stay $O(1)$.
 - D. Wecker, M. B. Hastings, M. Troyer, "Progress towards practical quantum
@@ -829,6 +860,6 @@ magnetization is sharply two-valued.
   Trotterized adiabatic state preparation.
 - K. Binder, "Finite size scaling analysis of ising model block distribution
   functions," Z. Phys. B 43, 119 (1981) — origin of the Binder-cumulant
-  crossing method used in `binder_crossing`; for a TFIM-specific derivation of
-  the crossing-drift correction see the finite-size-scaling literature cited
-  from arXiv:2103.09469 (quantum Monte Carlo, long-range TFIM).
+  crossing method used in `binder_crossing`; TFIM-specific finite-size
+  corrections to the crossing point are discussed in the quantum Monte Carlo
+  finite-size-scaling literature on long-range TFIMs (e.g. arXiv:2103.09469).

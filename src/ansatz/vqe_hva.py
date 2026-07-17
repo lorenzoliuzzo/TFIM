@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
 
 import pennylane as qml
 from pennylane import numpy as pnp
 
 from src.core.loader import IsingData
 from src.ansatz.vqe import VQEResult, run_adam
-
-PLOTS_DIR = Path(__file__).resolve().parent.parent / "plots"
 
 
 def extract_structure(hamiltonian: qml.Hamiltonian) -> tuple[list[tuple[int, int]], list[int]]:

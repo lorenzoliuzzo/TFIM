@@ -117,7 +117,6 @@ def plot_hc_scaling(
     fit_infl = fit_hc_power_law(ns, hc_infl)
     fit_bind = fit_hc_power_law(ns, hc_bind)
 
-    n_plot = np.linspace(ns.min(), ns.max() * 4, 300)
     colors = {"inflection": "#1f77b4", "binder": "#d62728"}
 
     setup_style()

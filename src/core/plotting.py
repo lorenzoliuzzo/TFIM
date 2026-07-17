@@ -5,7 +5,7 @@ from pathlib import Path
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-PLOTS_DIR = Path(__file__).resolve().parent.parent / "plots"
+PLOTS_DIR = Path(__file__).resolve().parent.parent.parent / "plots"
 
 # Fixed N -> color map so a given system size reads the same across every figure.
 N_COLORS: dict[int, str] = {

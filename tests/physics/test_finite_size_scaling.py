@@ -1,6 +1,5 @@
 """Tests for src/finite_size_scaling.py."""
 import numpy as np
-import pytest
 
 from src.physics.finite_size_scaling import (
     collect_central_charges,

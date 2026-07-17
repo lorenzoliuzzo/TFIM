@@ -11,7 +11,7 @@ from src.core.plotting import color_for_n, save_fig, setup_style
 from src.ansatz.vqe import abs_mz_from_state, run_vqe
 from src.ansatz.vqe_hva import warm_start_core
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parent.parent.parent
 RESULTS_CSV = ROOT / "data" / "vqe_benchmark.csv"
 
 # Independent random restarts per point. A single seed is an anecdote: VQE

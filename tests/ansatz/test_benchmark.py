@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import pandas as pd
 
 from src.ansatz.benchmark import plot_convergence, run_benchmark, summarize
 
