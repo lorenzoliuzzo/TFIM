@@ -1,0 +1,9 @@
+data/*.h5
+data/**/*.h5
+__pycache__/
+.venv/
+*.pyc
+.ipynb_checkpoints/
+.mythings/
+.pytest_cache/
+.claude/
