@@ -21,7 +21,8 @@ def test_abs_mz_matches_dataset_on_exact_states(data) -> None:
 
 def test_abs_mz_extremes() -> None:
     # |0000> -> all spins +1 -> |M_z| = 4
-    s = np.zeros(16); s[0] = 1.0
+    s = np.zeros(16)
+    s[0] = 1.0
     assert abs_mz_from_state(s, 4) == pytest.approx(4.0)
 
 

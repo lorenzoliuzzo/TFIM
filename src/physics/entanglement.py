@@ -56,7 +56,7 @@ def entropy_vs_subsystem(data: IsingData, field_index: int) -> tuple[np.ndarray,
     """At a fixed field, S(l) for every block size l = 1 .. N-1."""
     psi = data.ground_states[field_index]
     ls = np.arange(1, data.num_spins)
-    s = np.array([entanglement_entropy(psi, data.num_spins, int(l)) for l in ls])
+    s = np.array([entanglement_entropy(psi, data.num_spins, int(block_len)) for block_len in ls])
     return ls, s
 
 

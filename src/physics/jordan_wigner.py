@@ -79,12 +79,14 @@ def plot_jw_cross_check(
         gaps = np.array([gap_analytic(n, h) for h in data.fields])
         ax2.plot(data.fields, gaps, color=color, label=f"N={n}")
 
-    ax1.set_xlabel("$h$"); ax1.set_ylabel(r"$|E_{JW} - E_{ED}|$")
+    ax1.set_xlabel("$h$")
+    ax1.set_ylabel(r"$|E_{JW} - E_{ED}|$")
     ax1.set_title("Jordan-Wigner vs exact diagonalization (closed chain)")
     ax1.legend()
 
     ax2.axvline(1.0, color="k", ls="--", lw=1, alpha=0.6)
-    ax2.set_xlabel("$h$"); ax2.set_ylabel("excitation gap")
+    ax2.set_xlabel("$h$")
+    ax2.set_ylabel("excitation gap")
     ax2.set_title("Finite-size gap closing near $h=1$")
     ax2.legend()
 
